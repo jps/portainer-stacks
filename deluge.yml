@@ -9,9 +9,9 @@ services:
       - TZ=Europe/London
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - mnt/nas/appdata/deluge:/config
-      - mnt/nas/downloads/deluge:/downloads
-      - mnt/nas:mnt/nas
+      - /mnt/nas/appdata/deluge:/config
+      - /mnt/nas/downloads/deluge:/downloads
+      - /mnt/nas:mnt/nas
     ports:
       - 8112:8112
       - 6881:6881
