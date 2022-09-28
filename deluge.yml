@@ -9,7 +9,7 @@ services:
       - TZ=Europe/London
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - deluge-config:/config
+      - /opt/appdata/deluge/deluge:/config
       - /mnt/nas/downloads/deluge:/downloads
       - /mnt/nas:/mnt/nas
     ports:
@@ -17,12 +17,3 @@ services:
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
-volumes:
-  deluge-config:
-    external: true
-
-
-
-
-
-    
