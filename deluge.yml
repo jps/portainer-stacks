@@ -9,7 +9,7 @@ services:
       - TZ=Europe/London
       - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - /opt/appdata/deluge/deluge:/config
+      - /opt/appdata/deluge:/config
       - /mnt/nas/downloads/deluge:/downloads
       - /mnt/nas:/mnt/nas
     ports:
