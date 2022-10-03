@@ -8,7 +8,7 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /opt/appdata/prowlarr:/config
+      - /mnt/nas/appdata/prowlarr:/config
     ports:
       - 9696:9696
     restart: unless-stopped
@@ -20,9 +20,7 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /opt/appdata/radarr:/config
-#      - /path/to/movies:/movies #optional
-#      - /path/to/downloadclient-downloads:/downloads #optional
+      - /mnt/nas/appdata/radarr:/config
       - /mnt/nas:/mnt/nas
     ports:
       - 7878:7878
@@ -35,9 +33,7 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /opt/appdata/sonarr:/config
-#      - /path/to/tvseries:/tv #optional
-#      - /path/to/downloadclient-downloads:/downloads #optional
+      - /mnt/nas/appdata/sonarr:/config
       - /mnt/nas:/mnt/nas
     ports:
       - 8989:8989
