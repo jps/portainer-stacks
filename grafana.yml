@@ -1,0 +1,10 @@
+version: "2.1"
+services:
+  plex:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    volumes:
+      - /mnt/nas/appdata/grafana:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
