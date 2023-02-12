@@ -10,6 +10,6 @@ services:
       - TZ=Europe/London
     volumes:
       - /mnt/nas:/config
-    ports:
-      - 8123:8123
+    #ports:
+      #- 8123:8123
     restart: unless-stopped
