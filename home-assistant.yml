@@ -9,7 +9,5 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /mnt/nas:/config
-    #ports:
-      #- 8123:8123
+      - /mnt/nas/appdata/home-assistant:/config
     restart: unless-stopped
