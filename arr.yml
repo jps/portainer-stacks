@@ -11,7 +11,7 @@ services:
       - /mnt/nas/appdata/prowlarr:/config
     ports:
       - 9696:9696
-    restart: unless-stopped
+    restart: always
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -24,7 +24,7 @@ services:
       - /mnt/nas:/mnt/nas
     ports:
       - 7878:7878
-    restart: unless-stopped
+    restart: always
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -37,4 +37,4 @@ services:
       - /mnt/nas:/mnt/nas
     ports:
       - 8989:8989
-    restart: unless-stopped
+    restart: always
