@@ -5,6 +5,7 @@ services:
     image: "ghcr.io/home-assistant/home-assistant:stable"
     volumes:
       - /mnt/nas/appdata/home-assistant:/config
+      - /run/dbus:/run/dbus:ro
     environment:
       - TZ=Europe/London
     restart: unless-stopped
