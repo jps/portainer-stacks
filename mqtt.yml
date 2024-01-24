@@ -10,8 +10,10 @@ services:
     environment:
       - TZ=Europe/London
     restart: unless-stopped
-    network_mode: host
 volumes:
   mqtt_config:
   mqtt_data:
   mqtt_log:
+ports:
+  - 58880:1883
+  - 58881:9001
