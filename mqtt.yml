@@ -1,0 +1,17 @@
+version: "3"
+services:
+  mqtt:
+    container_name: mqtt
+    image: "eclipse-mosquitto:stable"
+    volumes:
+      - mqtt_config:/mosquitto/config
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+    environment:
+      - TZ=Europe/London
+    restart: unless-stopped
+    network_mode: host
+volumes:
+  mqtt_config:
+  mqtt_data:
+  mqtt_log:
