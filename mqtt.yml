@@ -2,7 +2,7 @@ version: "3"
 services:
   mqtt:
     container_name: mqtt
-    image: "eclipse-mosquitto:stable"
+    image: "eclipse-mosquitto"
     volumes:
       - mqtt_config:/mosquitto/config
       - mqtt_data:/mosquitto/data
