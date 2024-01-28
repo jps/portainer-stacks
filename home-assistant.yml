@@ -4,7 +4,7 @@ services:
     container_name: home-assistant
     image: "lscr.io/linuxserver/homeassistant:latest"
     volumes:
-      - /mnt/nas/appdata/home-assistant:/config
+      - home-assistant_config:/config
       - /run/dbus:/run/dbus:ro
     environment:
       - TZ=Europe/London
