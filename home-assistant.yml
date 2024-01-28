@@ -2,12 +2,14 @@ version: "3"
 services:
   homeassistant:
     container_name: home-assistant
-    image: "ghcr.io/home-assistant/home-assistant:stable"
+    image: "lscr.io/linuxserver/homeassistant:latest"
     volumes:
       - /mnt/nas/appdata/home-assistant:/config
       - /run/dbus:/run/dbus:ro
     environment:
       - TZ=Europe/London
+      - PUID=1000
+      - PGID=1000
     restart: unless-stopped
     privileged: true
     network_mode: host
