@@ -13,3 +13,5 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
+volumes:
+  home-assistant_config:
