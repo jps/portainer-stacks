@@ -10,7 +10,9 @@ services:
       - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
       - "80:80/tcp"
     environment:
-      TZ: 'Europe/London'
+      - TZ=Europe/London
+      - PIHOLE_UID=1000
+      - PIHOLE_GID=1000
       # WEBPASSWORD: 'set a secure password here or it will be random'
     # Volumes store your data between container upgrades
     volumes:
