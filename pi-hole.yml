@@ -13,6 +13,8 @@ services:
       - TZ=Europe/London
       - PIHOLE_UID=1000
       - PIHOLE_GID=1000
+      - WEB_UID=1000
+      - WEB_GID=1000
       # WEBPASSWORD: 'set a secure password here or it will be random'
     # Volumes store your data between container upgrades
     volumes:
