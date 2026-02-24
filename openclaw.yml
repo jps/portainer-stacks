@@ -1,0 +1,55 @@
+# OpenClaw - Personal AI Assistant
+# https://github.com/openclaw/openclaw
+#
+# Workspace config is synced from a separate git repository.
+# Set OPENCLAW_CONFIG_REPO to your config repo URL (e.g. https://github.com/user/openclaw-config.git).
+# Set OPENCLAW_GATEWAY_TOKEN to secure the gateway API.
+services:
+  openclaw:
+    image: ghcr.io/openclaw/openclaw:latest
+    container_name: openclaw
+    environment:
+      - TZ=Europe/London
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+    volumes:
+      - openclaw_data:/home/node/.openclaw
+      - openclaw_workspace:/home/node/.openclaw/workspace
+    ports:
+      - "18789:18789"
+      - "18790:18790"
+    init: true
+    restart: unless-stopped
+    depends_on:
+      openclaw-config-sync:
+        condition: service_started
+
+  openclaw-config-sync:
+    image: alpine/git:latest
+    container_name: openclaw-config-sync
+    environment:
+      - GIT_REPO=${OPENCLAW_CONFIG_REPO}
+      - GIT_BRANCH=${OPENCLAW_CONFIG_BRANCH:-main}
+      - SYNC_INTERVAL=${OPENCLAW_SYNC_INTERVAL:-300}
+    volumes:
+      - openclaw_workspace:/workspace
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        sync_repo() {
+          if [ -d /workspace/.git ]; then
+            cd /workspace && git pull origin $$GIT_BRANCH || echo "git pull failed, retrying next cycle"
+          else
+            git clone --branch $$GIT_BRANCH $$GIT_REPO /workspace || { echo "git clone failed"; return 1; }
+          fi
+        }
+        sync_repo || exit 1
+        while true; do
+          sleep $$SYNC_INTERVAL
+          sync_repo
+        done
+    restart: unless-stopped
+
+volumes:
+  openclaw_data:
+  openclaw_workspace:
