@@ -5,6 +5,17 @@
 # Set OPENCLAW_CONFIG_REPO to your config repo URL (e.g. https://github.com/user/openclaw-config.git).
 # Set OPENCLAW_GATEWAY_TOKEN to secure the gateway API.
 services:
+  init-chown-openclaw:
+    image: alpine:3.19
+    user: root
+    command: >
+      sh -c "chown -R 1000:1000 /home/node/.openclaw
+             && chown -R 1000:1000 /home/node/.openclaw/workspace || true"
+    volumes:
+      - openclaw_data:/home/node/.openclaw
+      - openclaw_workspace:/home/node/.openclaw/workspace
+    restart: "no"
+
   openclaw:
     image: ghcr.io/openclaw/openclaw:latest
     container_name: openclaw
@@ -20,6 +31,8 @@ services:
     init: true
     restart: unless-stopped
     depends_on:
+      init-chown-openclaw:
+        condition: service_completed_successfully
       openclaw-config-sync:
         condition: service_started
 
