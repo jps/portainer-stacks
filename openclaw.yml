@@ -26,8 +26,8 @@ services:
       - openclaw_data:/home/node/.openclaw
       - openclaw_workspace:/home/node/.openclaw/workspace
     ports:
-      - "127.0.0.1:18789:18789:18789"
-      - "127.0.0.1:18789:18790:18790"
+      - "127.0.0.1:18789:18789"
+      - "127.0.0.1:18789:18790"
     init: true
     restart: unless-stopped
     depends_on:
