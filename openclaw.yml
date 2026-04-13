@@ -10,9 +10,12 @@ services:
   init-chown-openclaw:
     image: alpine:3.19
     user: root
-    command: >
-      sh -c "chown -R 1000:1000 /home/node/.openclaw
-             && chown -R 1000:1000 /home/node/.openclaw/workspace || true"
+    command:
+      - sh
+      - -c
+      - |
+        chown -R 1000:1000 /home/node/.openclaw
+        chown -R 1000:1000 /home/node/.openclaw/workspace || true
     volumes:
       - openclaw_data:/home/node/.openclaw
       - openclaw_workspace:/home/node/.openclaw/workspace
