@@ -64,11 +64,12 @@ services:
           REPO_HOST=$$(echo "$$GIT_REPO" | sed -n 's|https://\([^/]*\)/.*|\1|p')
           git config --global credential.helper store
           echo "https://x-access-token:$${GIT_TOKEN}@$${REPO_HOST}" > ~/.git-credentials
+          chmod 600 ~/.git-credentials
         fi
 
         # Initial clone if workspace has no repo yet
         if [ ! -d /workspace/.git ]; then
-          git clone --branch $$GIT_BRANCH $$GIT_REPO /workspace || { echo "git clone failed"; exit 1; }
+          git clone --branch $$GIT_BRANCH $$GIT_REPO /workspace || { echo "git clone failed for $$GIT_REPO (branch: $$GIT_BRANCH)"; exit 1; }
         fi
 
         cd /workspace
