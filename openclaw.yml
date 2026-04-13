@@ -1,9 +1,11 @@
 # OpenClaw - Personal AI Assistant
 # https://github.com/openclaw/openclaw
 #
-# Workspace config is synced from a separate git repository.
+# Workspace changes are automatically backed up to a git repository.
 # Set OPENCLAW_CONFIG_REPO to your config repo URL (e.g. https://github.com/user/openclaw-config.git).
+# Set OPENCLAW_GIT_TOKEN to a GitHub token with push access.
 # Set OPENCLAW_GATEWAY_TOKEN to secure the gateway API.
+# Set OPENCLAW_SYNC_MODE to "two-way" to also pull remote changes (default: "backup").
 services:
   init-chown-openclaw:
     image: alpine:3.19
@@ -42,24 +44,67 @@ services:
     environment:
       - GIT_REPO=${OPENCLAW_CONFIG_REPO}
       - GIT_BRANCH=${OPENCLAW_CONFIG_BRANCH:-main}
+      - GIT_TOKEN=${OPENCLAW_GIT_TOKEN:-}
       - SYNC_INTERVAL=${OPENCLAW_SYNC_INTERVAL:-300}
+      - SYNC_MODE=${OPENCLAW_SYNC_MODE:-backup}
+      - GIT_USER_NAME=${OPENCLAW_GIT_USER_NAME:-openclaw-auto-backup}
+      - GIT_USER_EMAIL=${OPENCLAW_GIT_USER_EMAIL:-openclaw@localhost}
     volumes:
       - openclaw_workspace:/workspace
     entrypoint: /bin/sh
     command:
       - -c
       - |
-        sync_repo() {
-          if [ -d /workspace/.git ]; then
-            cd /workspace && git pull origin $$GIT_BRANCH || echo "git pull failed, retrying next cycle"
+        git config --global user.name "$$GIT_USER_NAME"
+        git config --global user.email "$$GIT_USER_EMAIL"
+        git config --global --add safe.directory /workspace
+
+        # Configure push authentication if token provided
+        if [ -n "$$GIT_TOKEN" ]; then
+          REPO_HOST=$$(echo "$$GIT_REPO" | sed -n 's|https://\([^/]*\)/.*|\1|p')
+          git config --global credential.helper store
+          echo "https://x-access-token:$${GIT_TOKEN}@$${REPO_HOST}" > ~/.git-credentials
+          chmod 600 ~/.git-credentials
+        fi
+
+        # Initial clone if workspace has no repo yet
+        if [ ! -d /workspace/.git ]; then
+          git clone --branch $$GIT_BRANCH $$GIT_REPO /workspace || { echo "git clone failed for $$GIT_REPO (branch: $$GIT_BRANCH)"; exit 1; }
+        fi
+
+        cd /workspace
+
+        backup_changes() {
+          if [ -n "$$(git status --porcelain)" ]; then
+            echo "Changes detected, backing up to GitHub..."
+            git add -A
+            git commit -m "Auto-backup: $$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            git push origin $$GIT_BRANCH || echo "Push failed, will retry next cycle"
           else
-            git clone --branch $$GIT_BRANCH $$GIT_REPO /workspace || { echo "git clone failed"; return 1; }
+            echo "No local changes to backup"
           fi
         }
-        sync_repo || exit 1
+
+        two_way_sync() {
+          # Commit any local changes first
+          if [ -n "$$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "Auto-backup: $$(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          fi
+          # Pull remote changes, preferring local on conflicts
+          git pull --no-rebase -X ours origin $$GIT_BRANCH || echo "Pull failed, pushing local changes only"
+          # Push to remote
+          git push origin $$GIT_BRANCH || echo "Push failed, will retry next cycle"
+        }
+
+        echo "Sync mode: $$SYNC_MODE"
         while true; do
           sleep $$SYNC_INTERVAL
-          sync_repo
+          if [ "$$SYNC_MODE" = "two-way" ]; then
+            two_way_sync
+          else
+            backup_changes
+          fi
         done
     restart: unless-stopped
 

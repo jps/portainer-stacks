@@ -44,14 +44,18 @@ Eclipse Mosquitto MQTT broker for IoT device communication. Commonly used alongs
 
 ### OpenClaw
 
-A personal AI assistant. Workspace configuration is synced from a separate Git repository on a configurable interval. Requires the following environment variables:
+A personal AI assistant. Workspace changes are automatically backed up to a Git repository on a configurable interval. By default, the sync service runs in **backup** mode — local changes are committed and pushed to GitHub. Set `OPENCLAW_SYNC_MODE` to `two-way` to also pull remote changes (conflicts are resolved in favour of local).
 
 | Variable | Description |
 |----------|-------------|
 | `OPENCLAW_GATEWAY_TOKEN` | Token to secure the gateway API |
-| `OPENCLAW_CONFIG_REPO` | URL of the workspace config Git repository |
+| `OPENCLAW_CONFIG_REPO` | HTTPS URL of the workspace config Git repository |
 | `OPENCLAW_CONFIG_BRANCH` | Config repo branch (default: `main`) |
+| `OPENCLAW_GIT_TOKEN` | GitHub personal access token (or fine-grained token) with push access to the config repo |
 | `OPENCLAW_SYNC_INTERVAL` | Sync interval in seconds (default: `300`) |
+| `OPENCLAW_SYNC_MODE` | `backup` (default) — push only; `two-way` — pull then push, local wins on conflicts |
+| `OPENCLAW_GIT_USER_NAME` | Git author name for auto-backup commits (default: `openclaw-auto-backup`) |
+| `OPENCLAW_GIT_USER_EMAIL` | Git author email for auto-backup commits (default: `openclaw@localhost`) |
 
 ### Pi-hole
 
